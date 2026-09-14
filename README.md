@@ -27,22 +27,25 @@ o directamente:
 Sebastian Huatuco Buendia — Tecnologías Emergentes - ISO46B
 
 
-## Laboratorio 02 - Librerías para Datos y Automatización
+## Flujo de datos — Semana 2
 
-### Flujo de Datos
+Esta sección documenta el pipeline de datos construido en la Semana 2 (Librerías para Datos y Automatización).
 
-* **Fuente**: Consumo de la API REST pública de [Open-Meteo](https://open-meteo.com/) (endpoint: `https://api.open-meteo.com/v1/forecast`), especificando las coordenadas de la ciudad de Huancayo (Latitud: `-12.07`, Longitud: `-75.21`) y un horizonte de pronóstico de 7 días.
+**Fuente:** API pública Open-Meteo (`https://api.open-meteo.com/v1/forecast`), sin necesidad de clave de acceso. Se consulta el pronóstico de 7 días para Huancayo (latitud -12.07, longitud -75.21): temperatura máxima, temperatura mínima y precipitación diaria.
 
-* **Transformación**:
-  * Computación vectorizada con [NumPy](https://numpy.org/) para operaciones sobre arreglos numéricos y estadística descriptiva, comparada frente al enfoque tradicional con bucles `for`.
-  * Petición HTTP mediante la librería [requests](https://requests.readthedocs.io/), con manejo de `timeout` y captura de excepciones (`Timeout`, `RequestException`) para tolerar fallas de red.
-  * Estructuración e inspección de claves de la respuesta JSON cruda (`daily`, `time`, `temperature_2m_max`, etc.) antes de su serialización.
-  * Persistencia del JSON crudo (`pronostico_huancayo.json`) para trazabilidad del dato original, y construcción de la tabla inicial (`pronostico_huancayo.csv`) con el módulo estándar `csv`.
-  * Carga y parseo del CSV mediante [pandas](https://pandas.pydata.org/), transformando la columna de fechas al tipo temporal `datetime64`.
-  * Generación de características (*feature engineering*):
-    * **Amplitud térmica**: Diferencia entre temperatura máxima y mínima (`temp_max - temp_min`).
-    * **Flag de precipitación**: Clasificación booleana para identificar días lluviosos (`precipitacion > 0`).
-    * **Categorización térmica**: Etiquetado condicional en `cálido` (>= 20°C), `templado` (>= 15°C) o `frío` (< 15°C).
-  * Agregación estadística avanzada utilizando agrupamientos con `.groupby()` sobre las categorías térmicas.
+**Transformación:**
+1. `clima.py` consume la API con `requests` (timeout de 5s y manejo de excepciones) y guarda la respuesta cruda en `pronostico_huancayo.json`.
+2. La misma respuesta se convierte a `pronostico_huancayo.csv` con el módulo estándar `csv`.
+3. `analisis.py` carga el CSV en un DataFrame de Pandas, agrega las columnas derivadas `amplitud_termica`, `dia_lluvioso` y `categoria` (frío/templado/cálido), y calcula un resumen agrupado por categoría con `groupby`.
 
-* **Salida**: Generación del dataset estructurado [pronostico_huancayo_procesado.csv](./pronostico_huancayo_procesado.csv) y la tabla resumida [resumen_por_categoria.csv](./resumen_por_categoria.csv), a partir de los datos crudos [pronostico_huancayo.json](./pronostico_huancayo.json) y [pronostico_huancayo.csv](./pronostico_huancayo.csv).
+**Salida:**
+- `pronostico_huancayo.json` — respuesta cruda de la API (trazabilidad del dato original).
+- `pronostico_huancayo.csv` — datos tabulares sin procesar.
+- `pronostico_huancayo_procesado.csv` — datos con las columnas derivadas.
+- `resumen_por_categoria.csv` — agregación por categoría de temperatura.
+
+**Cómo reproducirlo:**
+```bash
+python clima.py
+python analisis.py
+```

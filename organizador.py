@@ -1,4 +1,5 @@
 """Organiza los archivos de una carpeta en subcarpetas segun su extension."""
+
 import argparse
 import shutil
 from pathlib import Path

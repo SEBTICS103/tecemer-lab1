@@ -49,3 +49,14 @@ Esta sección documenta el pipeline de datos construido en la Semana 2 (Librerí
 python clima.py
 python analisis.py
 ```
+## Cierre de la Unidad I — Semana 3
+Herramienta de automatización: organizador.py clasifica y mueve archivos
+de una carpeta en subcarpetas por tipo (Documentos, Imagenes, Videos,
+Comprimidos, Otros), con modo de simulacion (--dry-run) mediante argparse.
+Uso:
+```
+python organizador.py <carpeta> [--dry-run]
+```
+Pruebas: test_organizador.py cubre clasificacion, movimiento real y modo
+simulacion, usando la fixture tmp_path de pytest para no afectar el
+sistema de archivos real. Ejecutar con: pytest -v

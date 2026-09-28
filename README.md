@@ -60,3 +60,23 @@ python organizador.py <carpeta> [--dry-run]
 Pruebas: test_organizador.py cubre clasificacion, movimiento real y modo
 simulacion, usando la fixture tmp_path de pytest para no afectar el
 sistema de archivos real. Ejecutar con: pytest -v
+
+## Modelo de Aprendizaje Automático — Semana 4
+Esta sección documenta el clasificador de lluvia basado en Redes Neuronales construido en la Semana 4.
+
+**Fuente:** Dataset meteorológico procesado de Huancayo (`pronostico_huancayo_procesado.csv` / datos de precipitación y variables climáticas).
+
+**Transformación y Modelo:**
+1. `preparar_dataset.py` carga el dataset, realiza la normalización/escalado de variables y genera los conjuntos de entrenamiento y prueba.
+2. `clasificador_lluvia.py` construye y entrena un modelo de Red Neuronal (Perceptrón Multicapa - MLP) con Keras/TensorFlow para clasificación binaria de lluvia.
+3. Se evalúa el desempeño del modelo y se compara frente al modelo baseline.
+
+**Salida:**
+- Pesos/Modelo entrenado guardado en `semana04/`.
+- `predecir.py` — script de inferencia para realizar nuevas predicciones con datos ingresados.
+
+**Cómo reproducirlo:**
+```bash
+python semana04/preparar_dataset.py
+python semana04/clasificador_lluvia.py
+python semana04/predecir.py
